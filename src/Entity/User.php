@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * User
  *
  * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="uid", columns={"uid"}), @ORM\UniqueConstraint(name="phone", columns={"phone"})}, indexes={@ORM\Index(name="username", columns={"username"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User
 {
@@ -139,11 +139,9 @@ class User
      * @ORM\Column(name="mode", type="integer", nullable=true)
      */
     private $mode = '0';
-
     /**
-     * @var string|null
-     *
-     * @ORM\Column(name="parent", type="text", length=65535, nullable=true)
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="parent", referencedColumnName="username")
      */
     private $parent;
 
@@ -594,12 +592,12 @@ class User
         return $this;
     }
 
-    public function getParent(): ?string
+    public function getParent(): ?User
     {
         return $this->parent;
     }
 
-    public function setParent(?string $parent): self
+    public function setParent(?User $parent): self
     {
         $this->parent = $parent;
 
@@ -1012,6 +1010,10 @@ class User
         $this->proFlag = $proFlag;
 
         return $this;
+    }
+    public function __toString()
+    {
+        return json_encode($this);
     }
 
 
