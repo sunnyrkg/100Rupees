@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
@@ -14,14 +15,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/", name="default_index")
+     * @Route("/{usernameInPath}", name="default_index")
+     *
      */
-    public function index()
+    public function index($usernameInPath)
     {
         /** @var UserRepository $userRepository
          *  @var User $user  
          */
-        $userRepository = $this->getDoctrine()->getRepository(User::class);
-        return new Response($userRepository->findUserByUsername("9556399794")[0]->getParent()->getParent()->getPhone());
+        $userService = new UserService($this->getDoctrine()->getManager());
+        return new Response($userService->getUserByUsername($usernameInPath)->getParent()->getParent()->getName());
     }
 }
